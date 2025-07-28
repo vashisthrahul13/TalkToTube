@@ -4,14 +4,70 @@
   <meta charset="UTF-8" />
   <title>YouTube Q&A</title>
   <style>
-    body { font-family: Arial, sans-serif; width: 300px; padding: 10px; }
-    #response { margin-top: 10px; white-space: pre-wrap; }
+    body {
+      font-family: Arial, sans-serif;
+      width: 300px;
+      padding: 10px;
+    }
+    #question {
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+    }
+    #ask {
+      margin-top: 8px;
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+    }
+    #response {
+      margin-top: 12px;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+    ul {
+      margin: 0;
+      padding-left: 16px;
+    }
+    a {
+      color: blue;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    #close {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    /* Spinner */
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #555;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      animation: spin 1s linear infinite;
+      margin: 10px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
-  <h3>YouTube Q&A</h3>
-  <input type="text" id="question" placeholder="Ask a question..." style="width: 100%;" />
-  <button id="ask" style="margin-top: 8px;">Search</button>
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <h3 style="margin: 0;">YouTube Q&A</h3>
+    <button id="close" title="Close">✖</button>
+  </div>
+  <input type="text" id="question" placeholder="Ask a question about this video..." />
+  <button id="ask">Ask</button>
   <div id="response"></div>
   <script src="popup.js"></script>
 </body>

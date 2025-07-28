@@ -12,6 +12,7 @@ from langchain.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings,ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_core.prompts import PromptTemplate
+from langchain.schema import Document
 
 from dotenv import load_dotenv
 import os
@@ -67,14 +68,20 @@ def rag(user_query : UserInput):
     try:
         transcript_list = ytt_api.fetch(video_id=video_id,languages=['en'])
         #merge the list into a single text
-        transcript = " ".join(snippet.text for snippet in transcript_list)
     except:
         raise HTTPException(status_code=500,detail='Unable to process video due to lack of english captions')
 
     ####1.Indexing
     #Building vector database
+    docs = []
+    for snippet in transcript_list:
+        docs.append(Document(
+            page_content= snippet.text,
+            metadata = {'start':snippet.start}
+            ))
+    
     splitter = RecursiveCharacterTextSplitter(chunk_size=500,chunk_overlap = 100)
-    chunks = splitter.create_documents(texts=[transcript])
+    chunks = splitter.split_documents(documents=docs)
 
     #creating vector store
     embedding_model = OpenAIEmbeddings()
@@ -95,6 +102,20 @@ def rag(user_query : UserInput):
     question = user_query.question
 
     retrieved_docs = retriever.invoke(input=question)
+
+    result = []
+    for doc in retrieved_docs:
+        timestamp = doc.metadata.get('start',0) 
+    #You’re using the .get() method of a dictionary (metadata is a dictionary), which allows you to:
+	# •	Retrieve the value for the key 'start' if it exists.
+	# •	If 'start' does not exist, return a default value — in this case, 0. -> prevents code from crashing if 'start' key not available
+
+        result.append({
+            'text':doc.page_content,
+            'timestamp':timestamp
+        })
+
+    
     final_context = "\n\n".join(doc.page_content for doc in retrieved_docs)
 
     print('################## Final context being sent ################')
@@ -126,4 +147,8 @@ def rag(user_query : UserInput):
     except Exception as e:
         raise HTTPException(status_code=404,detail = str(e))
     
-    return JSONResponse(status_code=200, content={'answer': response.content})
+    print('##########result############',result)
+    
+    return JSONResponse(status_code=200, content={'answer': response.content,
+                                                  'timestamp':result})
+    

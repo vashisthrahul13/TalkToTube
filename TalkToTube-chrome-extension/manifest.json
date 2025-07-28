@@ -3,7 +3,7 @@
   "name": "YouTube RAG Assistant",
   "version": "1.0",
   "description": "Ask questions about YouTube videos",
-  "permissions": ["tabs"],
+  "permissions": ["scripting", "activeTab", "tabs"],
   "host_permissions": ["https://*.youtube.com/*"],
   "action": {
     "default_popup": "popup.html",
