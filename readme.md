@@ -18,7 +18,7 @@ It also shows **relevant timestamps** where your query is discussed and allows *
 
 ### Demo
 
-![Demo](Resources/TalkToTube-Demo.gif)
+![Demo](https://github.com/vashisthrahul13/TalkToTube/blob/master/Resources/TalktoTube-Demo.gif)
 
 ---
 
