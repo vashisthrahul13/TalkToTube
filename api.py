@@ -4,6 +4,7 @@ import re
 
 from fastapi import FastAPI,HTTPException,Path
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -20,7 +21,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__),'..','.env'))
 class UserInput(BaseModel):
 
     question : Annotated[str,Field(...,description='The question asked by the user',example ='What is the topic of this video')]
-    video_url : Annotated[str,Field(...,description='Url of the video',example = 'https://www.youtube.com/watch?v=ghCSGRgVB_o&list=PLPTV0NXA_ZSgsLAr8YCgCwhPIJNNtexWu&index=11')]
+    video_url : Annotated[str,Field(...,description='Url of the video',example = 'https://www.youtube.com/watch?v=LPZh9BOjkQs')]
 
     @field_validator('video_url')
     @classmethod
@@ -42,8 +43,17 @@ class UserInput(BaseModel):
             raise ValueError('No valid YouTube video ID found in the URL')
 
 
-#building fastapi
+###############building fastapi
 app = FastAPI()
+
+# to allow chrome plugin to call out fastapi
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or explicitly set your extension origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.post('/ask')
 def rag(user_query : UserInput):
